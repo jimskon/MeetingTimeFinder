@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting List - Meeting Time Finder</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Meeting List</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Meeting Link</th>
+                </tr>
+            </thead>
+            <tbody id="meetingTableBody">
+                <tr>
+                    <td colspan="2" class="text-center">Loading meetings...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center mt-4">
+            <a href="index.html" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://138.28.162.128:3000/api/meetings";  // Update if needed
+
+        async function fetchMeetings() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Failed to fetch meetings");
+
+                const meetings = await response.json();
+                const tableBody = document.getElementById("meetingTableBody");
+
+                if (meetings.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="2" class="text-center">No meetings found.</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = meetings.map(meeting => `
+                    <tr>
+                        <td>${meeting.title}</td>
+                        <td><a href="/meeting.html?link=${meeting.link}" class="btn btn-primary btn-sm">View Meeting</a></td>
+                    </tr>
+                `).join("");
+            } catch (error) {
+                console.error("Error fetching meetings:", error);
+                document.getElementById("meetingTableBody").innerHTML = '<tr><td colspan="2" class="text-center text-danger">Failed to load meetings.</td></tr>';
+            }
+        }
+
+        fetchMeetings();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

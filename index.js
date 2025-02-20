@@ -47,6 +47,19 @@ app.get('/api/meetings/:link', (req, res) => {
     });
 });
 
+// Endpoint to fetch all meetings
+app.get('/api/meetings', (req, res) => {
+    const query = 'SELECT title, link FROM meetings';
+
+    db.execute(query, (err, results) => {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).json({ error: "Failed to fetch meetings" });
+        }
+        res.json(results);
+    });
+});
+
 // Endpoint to submit availability
 app.post('/api/meetings/:link/respond', (req, res) => {
     const { link } = req.params;
